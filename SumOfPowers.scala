@@ -24,17 +24,22 @@ Sample Output 0
 -----------------------------------------------------------------------------------------------------
 object Solution {
     
- def numberOfWays(X : Int, N : Int) : Int = {
-        def candidates(num : Int) : List[List[Int]] = {
-            if( Math.pow(num, N).toInt > X ) 
-                List.range(1, num).map(
-                    l => Math.pow(l, N).toInt
-                ).toSet[Int].subsets.map(_.toList).toList
-            else 
-                candidates(num+1)
-        }
-        candidates(1).count(l => l.sum == X)
+    
+def numberOfWays(X: Int, N: Int): Int = {
+
+    def getSum(sum: Int, maximum: Int): Int = sum match {
+      case x if x < 1 => 0
+      case _ => {
+        val limit = scala.math.min(maximum, scala.math.floor(scala.math.pow(sum, 1.0 / N)).toInt)
+        (limit to 1 by -1).map(x => {
+          val y = scala.math.pow(x, N).toInt
+          if (y == sum) 1 else getSum(sum - y, x - 1)
+        }).sum
+      }
     }
+
+    getSum(X, Integer.MAX_VALUE)
+  }
 
     def main(args: Array[String]) {
        println(numberOfWays(scala.io.StdIn.readInt(),scala.io.StdIn.readInt()))
